@@ -3,6 +3,10 @@
     <color name="crypto_orange_dark">#D87200</color>
     <color name="crypto_background_start">#1F1F2B</color>
     <color name="crypto_background_end">#0D0D15</color>
+    <color name="emeraldAccent">#34D399</color>
+    <color name="roseAccent">#F43F5E</color>
+    <color name="overlayDark">#B3000000</color>
+    <color name="crypto_axis">#9CA3AF</color>
     <color name="md_theme_light_primary">@color/crypto_orange</color>
     <color name="md_theme_light_onPrimary">#1A1A1A</color>
     <color name="md_theme_light_primaryContainer">#FFD7A6</color>

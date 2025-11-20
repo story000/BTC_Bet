@@ -12,4 +12,17 @@
     <string name="placeholder_dash">--</string>
     <string name="app_tagline">跟踪实时加密行情，随时掌握请求状态</string>
     <string name="label_chart">实时价格趋势</string>
+    <string name="game_balance_label">CURRENT POINTS</string>
+    <string name="game_start">START GAME</string>
+    <string name="game_select_prediction">SELECT PREDICTION</string>
+    <string name="game_in_progress">IN PROGRESS</string>
+    <string name="game_result_victory">VICTORY</string>
+    <string name="game_result_defeat">DEFEAT</string>
+    <string name="game_gain">+%1$d POINTS</string>
+    <string name="game_loss">-%1$d POINTS</string>
+    <string name="game_status_winning">WINNING</string>
+    <string name="game_status_losing">LOSING</string>
+    <string name="game_timer_value">%1$ss</string>
+    <string name="game_launch">预测游戏</string>
+    <string name="live_price_label">Live price %1$s</string>
 </resources>
