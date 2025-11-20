@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUp, ArrowDown, Wallet, Plus, Minus, RotateCcw, TrendingUp, TrendingDown, Zap, ShieldAlert, Bitcoin } from 'lucide-react';
+import jackpotBackground from '../fig/jackpot_background.png';
 
 // --- Custom Icons (Refined Axis-Style Candles) ---
 
@@ -259,13 +260,21 @@ const BitcoinGame = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans flex items-center justify-center p-0 sm:p-4 overflow-hidden relative">
+    <div
+      className="min-h-screen text-white font-sans flex items-center justify-center p-0 sm:p-4 overflow-hidden relative"
+      style={{
+        backgroundImage: `url(${jackpotBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       
-      {/* --- Global Atmosphere --- */}
+      {/* --- Background Atmosphere --- */}
       <div className={`absolute inset-0 transition-colors duration-700 pointer-events-none
-        ${prediction === 'RISE' ? 'bg-emerald-900/20' : ''}
-        ${prediction === 'FALL' ? 'bg-rose-900/20' : ''}
-        ${!prediction ? 'bg-[#050505]' : ''}
+        ${prediction === 'RISE' ? 'bg-emerald-900/15' : ''}
+        ${prediction === 'FALL' ? 'bg-rose-900/15' : ''}
+        ${!prediction ? 'bg-black/70' : ''}
       `} />
       
       <div className={`absolute top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-[150px] transition-all duration-1000 opacity-40
@@ -273,7 +282,7 @@ const BitcoinGame = () => {
       `} />
 
       {/* Main Game Interface */}
-      <div className="relative z-10 w-full max-w-[390px] h-[844px] max-h-screen bg-[#0c0e14] sm:rounded-[40px] shadow-2xl border border-white/5 flex flex-col overflow-hidden">
+      <div className="relative z-10 w-full max-w-[390px] h-[844px] max-h-screen bg-black/70 backdrop-blur-xl sm:rounded-[40px] shadow-2xl border border-white/10 flex flex-col overflow-hidden">
         
         {/* Header */}
         <div className="pt-10 pb-4 flex flex-col items-center z-20 bg-gradient-to-b from-[#0c0e14] to-transparent">

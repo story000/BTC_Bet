@@ -1,88 +1,75 @@
-# Android App 安装说明
+# Android App Installation Guide
 
-## 问题已修复 ✅
+## Fixed Issues
 
-已解决 WebView 资源路径问题：
-- ✅ 将 Vite 构建配置改为相对路径 (`base: './'`)
-- ✅ 重新构建 React 应用
-- ✅ 更新 Android assets
-- ✅ 重新编译 Android 应用
+The WebView assets now load correctly because:
+- The Vite build uses a relative base path (`base: './'`).
+- The React game was rebuilt with the new configuration.
+- The generated assets were copied into the Android project.
+- The Android app was rebuilt with the latest assets.
 
-## 安装方法
+## Installation Options
 
-### 方法 1：使用 Gradle 安装（推荐）
+### Option 1: Install with Gradle (Recommended)
 
 ```bash
 cd android-app
 ./gradlew installDebug
 ```
 
-### 方法 2：手动安装 APK
+### Option 2: Install the APK Manually
 
-1. APK 位置：
-```
-android-app/app/build/outputs/apk/debug/app-debug.apk
-```
+1. Locate the APK at:
+   `android-app/app/build/outputs/apk/debug/app-debug.apk`
+2. Transfer the APK to your Android device via USB, cloud storage, or Android Studio's Device File Explorer.
+3. Open the APK on the device and confirm the installation.
 
-2. 将 APK 传输到 Android 设备：
-   - 通过 USB 传输
-   - 通过邮件/云盘下载
-   - 使用 Android Studio 的 Device File Explorer
+### Option 3: Install from Android Studio
 
-3. 在设备上点击 APK 文件安装
+1. Open Android Studio and load the `android-app/` module.
+2. Connect a physical device or start an emulator.
+3. Press the Run ▶️ button to deploy the debug build.
 
-### 方法 3：使用 Android Studio
+## Smoke Test
 
-1. 打开 Android Studio
-2. 打开项目 `android-app/`
-3. 连接设备或启动模拟器
-4. 点击运行按钮 ▶️
+1. Launch the app.
+2. Tap **Prediction Game**.
+3. You should see the full WebView-based game with gradients and animations.
 
-## 验证是否成功
+## Troubleshooting
 
-1. 打开 App
-2. 点击"预测游戏"按钮
-3. 应该能看到完整的游戏界面（带动画、渐变等效果）
+### Inspect Logcat
 
-## 如果还是不行
-
-检查 Logcat 日志：
 ```bash
-# 方法 1：通过 Android Studio
-# View -> Tool Windows -> Logcat
-# 筛选标签：WebViewGameActivity
-
-# 方法 2：命令行（如果有 adb）
+# Android Studio: View -> Tool Windows -> Logcat and filter by WebViewGameActivity
+# CLI (with adb installed):
 adb logcat | grep -i "WebViewGameActivity\|chromium\|console"
 ```
 
-## 调试 WebView
+### Debug the WebView with Chrome
 
-启用 Chrome 远程调试：
-1. 连接设备到电脑
-2. Chrome 浏览器访问：`chrome://inspect`
-3. 在 "Remote Target" 中找到 WebView
-4. 点击 "inspect" 查看控制台
+1. Connect the device to your computer.
+2. Open Chrome and navigate to `chrome://inspect`.
+3. Locate the WebView under **Remote Target**.
+4. Click **inspect** to open DevTools and view console output.
 
-## 更新游戏内容
-
-如果需要修改游戏：
+## Updating the Game Assets
 
 ```bash
-# 1. 修改 React 代码
+# 1. Modify the React code
 cd bitcoin-game
-# 编辑 src/BitcoinGame.jsx
+# edit src/BitcoinGame.jsx
 
-# 2. 重新构建
+# 2. Rebuild the web bundle
 npm run build
 
-# 3. 复制到 Android
+# 3. Copy the build output into the Android project
 cp -r dist/* ../android-app/app/src/main/assets/game/
 
-# 4. 重新构建 Android
+# 4. Rebuild the Android app
 cd ../android-app
 ./gradlew assembleDebug
 
-# 5. 安装
+# 5. Install the updated build
 ./gradlew installDebug
 ```

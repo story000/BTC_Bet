@@ -1,28 +1,28 @@
 # Task 2 Web Service
 
-本目录包含部署到 Tomcat 的 Maven Web 应用：
-- `/api/price`：移动端调用的 REST 接口。参数 `symbol`（默认 `BTCUSDT`）和可选 `clientId`，返回 Binance 现价与时间戳。
-- `/dashboard`：运维仪表盘，展示请求统计（总请求、成功率、平均延迟、热门代币）以及格式化的最新日志表格。
+This directory contains the Maven web app deployed to Tomcat:
+- `/api/price`: REST endpoint for the mobile client. Accepts `symbol` (default `BTCUSD`) and optional `clientId`; returns the latest Binance quote and timestamp.
+- `/dashboard`: Ops dashboard that visualizes request totals, success rate, avg latency, popular symbols, and the most recent logs.
 
-## 运行依赖
+## Requirements
 - JDK 11+
 - Maven 3.9+
-- 外部 MongoDB Atlas 实例（通过环境变量 `MONGODB_URI`、`MONGODB_DATABASE`、`MONGODB_COLLECTION` 配置）
-- 可选：`BINANCE_API_BASE` 重写默认 Binance 现价端点
+- MongoDB Atlas (configure via `MONGODB_URI`, `MONGODB_DATABASE`, `MONGODB_COLLECTION`)
+- Optional `BINANCE_API_BASE` to override the default Binance price endpoint
 
-## 构建
+## Build
 ```bash
 mvn -f server/pom.xml clean package
 ```
-产物位于 `server/target/ROOT.war`，`Dockerfile` 会在 Codespace/容器中自动构建并部署到 Tomcat。
+The WAR is produced at `server/target/ROOT.war`. The provided `Dockerfile` builds and deploys it to Tomcat inside Codespaces/containers.
 
-## 关键日志字段
-每次 `/api/price` 调用会记录：
-1. `requestId` 与 `requestReceivedAt`/`responseSentAt`
-2. `clientId` 与来源 IP
-3. 请求的 `symbol`
-4. Binance HTTP 状态、延迟、调用 URL
-5. 返回价格（如成功）及总处理延迟
-6. 成功/失败标记与错误信息
+## Logged Fields
+Every `/api/price` request records:
+1. `requestId`, `requestReceivedAt`, `responseSentAt`
+2. `clientId` and origin IP
+3. Requested `symbol`
+4. Binance HTTP status, latency, and endpoint
+5. Returned price (if successful) plus total processing latency
+6. Success/failure flag and any error message
 
-仪表盘会基于这些字段计算热门币种、成功率以及平均响应时间。
+The dashboard aggregates these metrics to display popular symbols, success rate, and average response times.

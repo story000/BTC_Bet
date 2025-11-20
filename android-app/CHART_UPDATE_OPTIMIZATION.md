@@ -1,173 +1,84 @@
-# 折线图流畅度优化
+# Line-Chart Smoothness Optimization
 
-## ✅ 已完成优化
+## Completed Enhancements
 
-将价格推送频率从 **1秒** 提升到 **200ms (0.2秒)**
+The price feed now refreshes every **200 ms** instead of **1 second**, giving the WebView chart five times more data points.
 
-### 📊 效果对比
+### Before vs After
 
-| 配置 | 更新频率 | 10秒内数据点 | 折线平滑度 | 适用场景 |
-|------|---------|-------------|-----------|---------|
-| **优化前** | 1000ms (1秒) | 10-11 个点 | ⭐⭐ 锯齿明显 | 节省服务器 |
-| **优化后** | 200ms (0.2秒) | **50 个点** | ⭐⭐⭐⭐⭐ 非常流畅 | 最佳体验 |
+| Config | Refresh Interval | Samples in 10s | Visual Smoothness | When to Use |
+| --- | --- | --- | --- | --- |
+| Previous | 1000 ms | 10–11 points | ⭐⭐ jagged | Minimum server load |
+| Current | 200 ms | **≈50 points** | ⭐⭐⭐⭐⭐ very smooth | Best user experience |
 
-## 🎯 具体改进
-
-### 代码变更
-**文件**: `WebViewPredictionGameActivity.kt:68`
+## Code Change
+`WebViewPredictionGameActivity.kt:68`
 
 ```kotlin
-// 修改前
-delay(1000) // Update every second
+// Before
+// delay(1000) // Update every second
 
-// 修改后
-delay(500) // Update every 200ms (0.2 second) for smooth chart
+// After
+delay(200) // 0.2 s cadence for a fluid chart
 ```
 
-### 视觉效果
+> We also rewired the fetch loop to handle transient failures gracefully so the tighter cadence does not spam errors.
 
-**优化前**（1秒更新）:
-```
-Price: 64230 -------- 64232 -------- 64228 -------- ...
-       (锯齿状折线，10个点)
-```
+## Visual Difference
 
-**优化后**（200ms更新）:
-```
-Price: 64230 - 64230.5 - 64231 - 64231.5 - 64232 - ...
-       (平滑曲线，50个点)
-```
+- **1s cadence**: curve looks blocky, hard to read direction.
+- **200 ms cadence**: curve looks continuous; up/down momentum is obvious.
 
-## 📈 性能影响
+## Performance Impact
 
-### 服务器压力
-- **请求频率**: 从 1次/秒 提升到 **5次/秒**
-- **单用户流量**: ~500 bytes/秒 → ~2.5 KB/秒
-- **10个用户**: ~25 KB/秒
-- **100个用户**: ~250 KB/秒
+- **Server traffic**: 1 req/s → 5 req/s (~2.5 KB/s per player; 25 KB/s for 10 players; 250 KB/s for 100 players).
+- **Mongo logging**: 10 entries per 10-second round → 50 entries. Plan to prune historical logs periodically.
+- **Client**: WebView executes 5 JS injections per second; React redraws ~50 points. CPU/memory impact is negligible on modern devices.
 
-### MongoDB 写入
-- **日志频率**: 5倍增长
-- **10秒游戏**: 10条日志 → **50条日志**
-- **建议**: 定期清理历史日志
+## Tuning Options
 
-### 客户端
-- **WebView 更新**: 每秒 5 次 JavaScript 调用
-- **React 渲染**: 折线图每秒重绘 5 次
-- **内存**: 50个数据点，可忽略不计
-- **性能**: ✅ 完全流畅，无卡顿
+| Delay | Pros | Cons |
+| --- | --- | --- |
+| 100 ms | Ultra-smooth motion | Doubles server load again |
+| **200 ms** | Balanced | Current default |
+| 500 ms | Saves bandwidth | Curve looks slightly choppy |
+| 1000 ms | Minimal load | Poor visual quality |
 
-## 🔧 如需调整频率
+You can implement a hybrid strategy:
 
-### 选项 1：更激进（100ms）
 ```kotlin
-delay(100) // 每秒10次，折线极其流畅
+val delayMs = if (gameState == GameState.PLAYING) 200L else 1000L
 ```
-- ✅ 最佳视觉效果
-- ⚠️ 服务器压力翻倍
 
-### 选项 2：更保守（500ms）
+…or adapt to volatility:
+
 ```kotlin
-delay(500) // 每秒2次，较流畅
-```
-- ✅ 平衡性能和体验
-- ✅ 20个数据点，仍然流畅
-- ✅ 服务器压力较小
-
-### 选项 3：回退原值（1000ms）
-```kotlin
-delay(1000) // 每秒1次
-```
-- ✅ 最省资源
-- ❌ 折线不够流畅
-
-## 🎮 用户体验
-
-### 游戏开始后
-1. **点击 START GAME**
-2. **10秒倒计时**开始
-3. **折线图实时更新**:
-   - 每 0.2 秒增加一个新数据点
-   - 平滑的价格曲线
-   - 绿色（领先）或红色（落后）动态变化
-4. **倒计时结束**，显示最终结果
-
-### 实际体验
-- ✅ 折线图流畅自然
-- ✅ 能清晰看到价格波动趋势
-- ✅ 视觉反馈及时
-- ✅ 游戏沉浸感强
-
-## 📱 测试验证
-
-### 安装新版本
-```bash
-cd android-app
-./gradlew installDebug
-```
-
-### 验证更新频率
-查看 Logcat:
-```bash
-adb logcat | grep "Updated price"
-
-# 应该看到：
-# 12:52:00.000 Updated price: 64230.50
-# 12:52:00.200 Updated price: 64230.80  ← 间隔200ms
-# 12:52:00.400 Updated price: 64231.10  ← 间隔200ms
-# 12:52:00.600 Updated price: 64230.90
-# ...
-```
-
-### 测试流程
-1. 打开游戏
-2. 选择 RISE 或 FALL
-3. 点击 START GAME
-4. 观察折线图：
-   - ✅ 应该看到持续增长的曲线
-   - ✅ 10秒内约 50 个数据点
-   - ✅ 折线平滑无锯齿
-
-## 💡 进一步优化建议
-
-### 1. 混合策略
-```kotlin
-// IDLE 状态：1秒更新（省资源）
-// PLAYING 状态：200ms更新（流畅图表）
-val updateDelay = if (isGamePlaying) 200L else 1000L
-delay(updateDelay)
-```
-
-### 2. 自适应频率
-```kotlin
-// 根据价格波动幅度自动调整
-val priceChange = abs(currentPrice - lastPrice)
+val drift = abs(currentPrice - lastPrice)
 val delay = when {
-    priceChange > 100 -> 100  // 波动大时更频繁
-    priceChange > 10 -> 200
-    else -> 500              // 波动小时降低频率
+    drift > 100 -> 100L
+    drift > 10 -> 200L
+    else -> 500L
 }
 ```
 
-### 3. WebSocket 推送
-- 服务器主动推送价格变化
-- 只在价格变化时推送
-- 比轮询更高效
-- 需要后端支持
+WebSockets would be the ultimate solution (push-only updates), but that requires server support.
 
-## 🎯 总结
+## QA Checklist
 
-**当前配置 (200ms) 是最佳平衡点**:
-- ✅ 折线图非常流畅
-- ✅ 服务器压力可接受
-- ✅ 用户体验极佳
-- ✅ 开发成本低
+1. Reinstall the Android app:
+   ```bash
+   cd android-app
+   ./gradlew installDebug
+   ```
+2. Launch the WebView game, start a round, and confirm the chart adds ~50 points over 10 seconds.
+3. Inspect Logcat:
+   ```bash
+   adb logcat | grep "Price updates"
+   # Timestamps should differ by ~0.2 s.
+   ```
 
-**如果服务器压力大**，可以考虑：
-- 方案 1: 改为 500ms（仍然流畅）
-- 方案 2: 实现混合策略（游戏时快，空闲时慢）
-- 方案 3: 升级为 WebSocket
+## Takeaways
 
-**如果追求极致体验**，可以：
-- 改为 100ms（折线极其平滑）
-- 或使用客户端插值（不增加服务器压力）
+- 200 ms is the sweet spot for smoothness vs. cost.
+- Consider 500 ms or a hybrid loop if server CPU/network becomes a concern.
+- Upgrade to WebSockets for the best long-term scalability.
