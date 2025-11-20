@@ -1,7 +1,8 @@
-package edu.cmu.project4.task1;
+/*
+ * Author: Siyuan Liu (sliu5)
+ */
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+package edu.cmu.project4.task1;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,12 +12,15 @@ import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.Locale;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Simple CLI utility that calls the Binance ticker endpoint and prints the latest price.
  */
 public final class FetchBinancePrice {
     private static final String DEFAULT_BASE_URL = "https://api.binance.com/api/v3/ticker/price";
-    private static final String DEFAULT_SYMBOL = "BTCUSDT";
+    private static final String DEFAULT_SYMBOL = "BTCUSD";
 
     private FetchBinancePrice() {
     }

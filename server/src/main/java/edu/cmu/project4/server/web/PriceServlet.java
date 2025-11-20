@@ -1,6 +1,19 @@
+/*
+ * Author: Siyuan Liu (sliu5)
+ */
+
 package edu.cmu.project4.server.web;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.cmu.project4.server.biz.BinanceClient;
 import edu.cmu.project4.server.biz.BinanceClient.BinanceClientException;
 import edu.cmu.project4.server.biz.BinanceClient.PriceQuote;
@@ -14,14 +27,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * REST endpoint consumed by the Android client. Returns latest price information for a symbol.
@@ -45,7 +50,7 @@ public class PriceServlet extends HttpServlet {
         String clientId = req.getParameter("clientId");
         String symbol = req.getParameter("symbol");
         if (symbol == null || symbol.isBlank()) {
-            symbol = "BTCUSDT";
+            symbol = "BTCUSD";
         }
         symbol = symbol.toUpperCase();
 

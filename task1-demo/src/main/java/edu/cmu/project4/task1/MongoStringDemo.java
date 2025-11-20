@@ -1,3 +1,7 @@
+/*
+ * Author: Siyuan Liu (sliu5)
+ */
+
 package edu.cmu.project4.task1;
 
 import com.mongodb.ConnectionString;

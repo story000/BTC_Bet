@@ -1,3 +1,7 @@
+/*
+ * Author: Siyuan Liu (sliu5)
+ */
+
 package edu.cmu.project4.server.data;
 
 import org.bson.Document;

@@ -1,3 +1,7 @@
+/*
+ * Author: Siyuan Liu (sliu5)
+ */
+
 package edu.cmu.project4.server.web;
 
 import edu.cmu.project4.server.config.AppAttributes;
