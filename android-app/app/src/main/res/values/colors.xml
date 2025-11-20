@@ -1,16 +1,20 @@
 <resources>
-    <color name="md_theme_light_primary">#006877</color>
-    <color name="md_theme_light_onPrimary">#FFFFFF</color>
-    <color name="md_theme_light_primaryContainer">#97F0FF</color>
-    <color name="md_theme_light_onPrimaryContainer">#001F25</color>
-    <color name="md_theme_dark_primary">#4FD8EB</color>
-    <color name="md_theme_dark_onPrimary">#00363E</color>
-    <color name="md_theme_dark_primaryContainer">#004E59</color>
-    <color name="md_theme_dark_onPrimaryContainer">#97F0FF</color>
-    <color name="md_theme_light_background">#FCFCFF</color>
-    <color name="md_theme_light_onBackground">#1A1C1E</color>
-    <color name="md_theme_light_surface">#FFFFFF</color>
-    <color name="md_theme_dark_background">#1A1C1E</color>
+    <color name="crypto_orange">#FF8C00</color>
+    <color name="crypto_orange_dark">#D87200</color>
+    <color name="crypto_background_start">#1F1F2B</color>
+    <color name="crypto_background_end">#0D0D15</color>
+    <color name="md_theme_light_primary">@color/crypto_orange</color>
+    <color name="md_theme_light_onPrimary">#1A1A1A</color>
+    <color name="md_theme_light_primaryContainer">#FFD7A6</color>
+    <color name="md_theme_light_onPrimaryContainer">#2C1000</color>
+    <color name="md_theme_dark_primary">#FFB356</color>
+    <color name="md_theme_dark_onPrimary">#2C1000</color>
+    <color name="md_theme_dark_primaryContainer">#6A2C00</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FFD7A6</color>
+    <color name="md_theme_light_background">#1A1A24</color>
+    <color name="md_theme_light_onBackground">#FFFFFF</color>
+    <color name="md_theme_light_surface">#222233</color>
+    <color name="md_theme_dark_background">#0D0D15</color>
     <color name="md_theme_dark_onBackground">#E2E2E6</color>
-    <color name="screen_background">#F7F3FF</color>
+    <color name="screen_background">#0F101A</color>
 </resources>

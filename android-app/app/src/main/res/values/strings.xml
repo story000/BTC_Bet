@@ -11,4 +11,5 @@
     <string name="label_error">错误信息</string>
     <string name="placeholder_dash">--</string>
     <string name="app_tagline">跟踪实时加密行情，随时掌握请求状态</string>
+    <string name="label_chart">实时价格趋势</string>
 </resources>
