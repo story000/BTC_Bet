@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Crypto Monitor</string>
+    <string name="label_symbol">交易对（symbol）</string>
+    <string name="label_server">服务器 URL</string>
+    <string name="hint_symbol">例如 BTCUSDT</string>
+    <string name="hint_server">例如 http://10.0.2.2:8080/</string>
+    <string name="btn_fetch">获取价格</string>
+    <string name="label_price">当前价格</string>
+    <string name="label_timestamp">更新时间</string>
+    <string name="label_status">状态</string>
+    <string name="label_error">错误信息</string>
+    <string name="placeholder_dash">--</string>
+    <string name="app_tagline">跟踪实时加密行情，随时掌握请求状态</string>
+</resources>
