@@ -50,6 +50,7 @@ const BitcoinGame = ({ onBack }) => {
   // --- Game State ---
   const [balance, setBalance] = useState(12345);
   const [isAndroid, setIsAndroid] = useState(false);
+  const [baseUrl, setBaseUrl] = useState('');
   const [betAmount, setBetAmount] = useState(1000);
   const [prediction, setPrediction] = useState(null); // 'RISE' | 'FALL'
   const [gameState, setGameState] = useState('IDLE'); // 'IDLE' | 'PLAYING' | 'RESULT'
@@ -90,49 +91,50 @@ const BitcoinGame = ({ onBack }) => {
     const isAndroidWebView = typeof window.AndroidBridge !== 'undefined';
     setIsAndroid(isAndroidWebView);
 
+    // Base URL resolution (query param -> localStorage -> default)
+    const params = new URLSearchParams(window.location.search);
+    const savedBase = localStorage.getItem('cryptoBaseUrl');
+    const defaultBase = 'https://btc-bet-backend-1012075997843.us-central1.run.app/';
+    const rawBase = params.get('server') || savedBase || defaultBase;
+    const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+    setBaseUrl(normalizedBase);
+    localStorage.setItem('cryptoBaseUrl', normalizedBase);
+
     // Expose functions to Android
     window.updateBalance = (newBalance) => {
-      console.log('Balance updated from Android:', newBalance);
       setBalance(newBalance);
     };
 
     window.updatePrice = (newPrice) => {
-      console.log('Price updated from Android:', newPrice);
       currentPriceRef.current = newPrice;
       setCurrentPrice(newPrice);
     };
 
-    // If in Android, log that we're waiting for real prices
-    if (isAndroidWebView) {
-      console.log('Android Bridge initialized - waiting for real prices from server');
-      // Notify Android that we're ready
-      if (window.AndroidBridge && window.AndroidBridge.log) {
-        window.AndroidBridge.log('React game loaded and ready');
-      }
-    } else {
-      console.log('Browser mode - will use simulated prices');
+    if (isAndroidWebView && window.AndroidBridge?.log) {
+      window.AndroidBridge.log('Web game ready');
     }
   }, []);
 
-  // --- Price Simulation Engine ---
+  // --- Price Fetcher (backend) ---
   useEffect(() => {
-    // Only run simulation if NOT in Android WebView
-    // Android will push real prices via window.updatePrice
-    if (isAndroid) {
-      console.log('Running in Android WebView - using real prices from server');
-      return;
-    }
-
-    console.log('Running in browser - using simulated prices');
-    priceUpdateRef.current = setInterval(() => {
-      const change = (Math.random() - 0.5) * 150;
-      const newPrice = currentPriceRef.current + change;
-      currentPriceRef.current = newPrice;
-      setCurrentPrice(newPrice);
-    }, 100);
-
+    if (!baseUrl) return;
+    const fetchPrice = async () => {
+      try {
+        const res = await fetch(`${baseUrl}api/price?symbol=BTCUSD`);
+        const data = await res.json();
+        const price = parseFloat(data.price);
+        if (!Number.isNaN(price)) {
+          currentPriceRef.current = price;
+          setCurrentPrice(price);
+        }
+      } catch (err) {
+        console.error('Failed to fetch price', err);
+      }
+    };
+    fetchPrice();
+    priceUpdateRef.current = setInterval(fetchPrice, 1000);
     return () => clearInterval(priceUpdateRef.current);
-  }, [isAndroid]);
+  }, [baseUrl]);
 
   // --- History Management ---
   useEffect(() => {
