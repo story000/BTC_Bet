@@ -1,7 +1,7 @@
 # Task 2 Web Service
 
 This directory contains the Maven web app deployed to Tomcat:
-- `/api/price`: REST endpoint for the mobile client. Accepts `symbol` (default `BTCUSD`) and optional `clientId`; returns the latest Binance quote and timestamp.
+- `/api/price`: REST endpoint consumed by the web client. Accepts `symbol` (default `BTCUSD`) and optional `clientId`; returns the latest Binance quote and timestamp.
 - `/dashboard`: Ops dashboard that visualizes request totals, success rate, avg latency, popular symbols, and the most recent logs.
 
 ## Requirements

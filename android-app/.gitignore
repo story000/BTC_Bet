@@ -1,8 +1,0 @@
-.gradle/
-.idea/
-local.properties
-app/.gradle/
-app/.idea/
-app/local.properties
-app/build/
-build/
