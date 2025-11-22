@@ -46,7 +46,14 @@ public class PriceServlet extends HttpServlet {
     }
 
     @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        addCorsHeaders(resp);
+        resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        addCorsHeaders(resp);
         String clientId = req.getParameter("clientId");
         String symbol = req.getParameter("symbol");
         if (symbol == null || symbol.isBlank()) {
@@ -116,5 +123,11 @@ public class PriceServlet extends HttpServlet {
         Map<String, Object> body = new HashMap<>();
         body.put("error", message);
         mapper.writeValue(resp.getOutputStream(), body);
+    }
+
+    private void addCorsHeaders(HttpServletResponse resp) {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
+        resp.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 }

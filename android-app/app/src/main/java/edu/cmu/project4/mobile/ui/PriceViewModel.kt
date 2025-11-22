@@ -55,7 +55,7 @@ class PriceViewModel(
     }
 
     private suspend fun refreshPrice(showLoading: Boolean) {
-        val symbol = _uiState.value.symbolInput.ifBlank { "BTCUSDT" }
+        val symbol = _uiState.value.symbolInput.ifBlank { "BTCUSD" }
         val server = _uiState.value.serverInput.ifBlank { BuildConfig.DEFAULT_BASE_URL }
         if (showLoading) {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, statusMessage = "请求中...") }
@@ -71,7 +71,7 @@ class PriceViewModel(
                 it.copy(
                     isLoading = false,
                     lastPrice = response,
-                    statusMessage = if (showLoading) "成功" else "实时更新",
+                    statusMessage = if (showLoading) "Success" else "Realtime Update",
                     errorMessage = null,
                     priceHistory = updatedHistory
                 )
@@ -90,7 +90,7 @@ class PriceViewModel(
 
 data class PriceUiState(
     val isLoading: Boolean = false,
-    val symbolInput: String = "BTCUSDT",
+    val symbolInput: String = "BTCUSD",
     val serverInput: String = BuildConfig.DEFAULT_BASE_URL,
     val lastPrice: PriceResponse? = null,
     val statusMessage: String? = null,

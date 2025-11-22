@@ -15,7 +15,6 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.snackbar.Snackbar
-import android.content.Intent
 import edu.cmu.project4.mobile.BuildConfig
 import edu.cmu.project4.mobile.R
 import edu.cmu.project4.mobile.data.PriceRepository
@@ -52,10 +51,7 @@ class MainActivity : AppCompatActivity() {
         binding.fetchButton.setOnClickListener {
             viewModel.fetchLatestPrice()
         }
-        binding.gameButton.setOnClickListener {
-            startActivity(Intent(this, edu.cmu.project4.mobile.ui.game.PredictionGameActivity::class.java))
-        }
-
+        binding.backHomeButton.setOnClickListener { finish() }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { renderState(it) }

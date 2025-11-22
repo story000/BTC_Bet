@@ -19,7 +19,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "DEFAULT_BASE_URL", "\"http://10.0.2.2:8080/\"")
+        buildConfigField("String", "DEFAULT_BASE_URL", "\"https://musical-funicular-x4wr6rq7j9rhpg5p-8080.app.github.dev/\"")
     }
 
     buildTypes {
@@ -31,7 +31,7 @@ android {
             )
         }
         debug {
-            buildConfigField("String", "DEFAULT_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "DEFAULT_BASE_URL", "\"https://musical-funicular-x4wr6rq7j9rhpg5p-8080.app.github.dev/\"")
         }
     }
 

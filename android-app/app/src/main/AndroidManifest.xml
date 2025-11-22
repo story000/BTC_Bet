@@ -15,7 +15,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.CryptoMonitor">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.game.PredictionGameActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CryptoMonitor" />
+        <activity
+            android:name=".ui.game.WebViewPredictionGameActivity"
             android:exported="false"
             android:theme="@style/Theme.CryptoMonitor" />
     </application>

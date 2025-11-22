@@ -39,6 +39,9 @@ class WebViewPredictionGameActivity : AppCompatActivity() {
         startPriceUpdates()
 
         binding.closeButton.setOnClickListener { finish() }
+        binding.homeButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun startPriceUpdates() {
