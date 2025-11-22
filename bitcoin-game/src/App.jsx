@@ -1,50 +1,50 @@
-import React, { useState } from 'react';
-import { Gamepad2, Coins, Sparkles, LogIn, Crown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Gamepad2, Coins, Sparkles, LogIn, Crown, Shield } from 'lucide-react';
 import BitcoinGame from './BitcoinGame.jsx';
 import jackpotBackground from '../fig/jackpot_background.png';
 
-const CashRain = () => {
-  const bills = Array.from({ length: 16 });
+const CoinBurst = () => {
+  const coins = Array.from({ length: 18 });
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {bills.map((_, idx) => (
+      {coins.map((_, idx) => (
         <span
           key={idx}
-          className="absolute text-3xl text-amber-200/80 animate-cash-fall select-none"
+          className="coin-burst"
           style={{
-            left: `${(idx * 7) % 100}%`,
-            animationDelay: `${idx * 0.2}s`,
+            left: `${(idx * 11) % 100}%`,
+            animationDelay: `${idx * 0.12}s`,
           }}
         >
-          💵
+          🪙
         </span>
       ))}
     </div>
   );
 };
 
-const HomeCard = ({ onPlay, onLogin, isLoading }) => (
+const HomeCard = ({ onPlay, onLogin, isLoading, googleReady }) => (
   <div
-    className="min-h-screen flex items-center justify-center bg-black text-white px-4 relative overflow-hidden"
+    className="min-h-screen flex items-center justify-center text-white px-4 relative overflow-hidden"
     style={{
-      backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.9), rgba(14,14,14,0.6)), url(${jackpotBackground})`,
+      backgroundImage: `url(${jackpotBackground})`,
       backgroundSize: 'cover',
-      backgroundPosition: 'center'
+      backgroundPosition: 'center',
     }}
   >
-    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85" />
-    <CashRain />
-    <div className="relative w-full max-w-3xl rounded-3xl border border-amber-400/30 bg-black/60 backdrop-blur p-10 shadow-[0_10px_60px_rgba(0,0,0,0.45)]">
+    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/75" />
+    <CoinBurst />
+    <div className="relative w-full max-w-4xl rounded-3xl border border-amber-400/30 bg-black/55 backdrop-blur p-10 shadow-[0_10px_80px_rgba(0,0,0,0.6)]">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-200 text-xs font-semibold tracking-[0.2em] uppercase">
-            <Sparkles className="w-4 h-4" /> High Roller Mode
+            <Sparkles className="w-4 h-4" /> High Roller
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight mt-3">
-            Spin Up Your BTC Fortune
+            Crack the Chest, Chase the BTC
           </h1>
-          <p className="text-white/70 mt-3 max-w-xl">
-            20秒内预测涨跌，赢取筹码。实时对接后端行情，下注、开局、见证结果。
+          <p className="text-white/75 mt-3 max-w-2xl">
+            20秒预测涨跌，宝箱狂喷金币，赢取 BTC 筹码。无聊不刺激？直接开局。
           </p>
           <div className="flex flex-wrap gap-3 mt-6">
             <button
@@ -56,15 +56,15 @@ const HomeCard = ({ onPlay, onLogin, isLoading }) => (
             </button>
             <button
               onClick={onLogin}
-              disabled={isLoading}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-gray-900 font-semibold shadow-[0_10px_25px_rgba(255,255,255,0.25)] hover:shadow-[0_10px_35px_rgba(255,255,255,0.35)] transition disabled:opacity-70"
+              disabled={isLoading || !googleReady}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-gray-900 font-semibold shadow-[0_10px_25px_rgba(255,255,255,0.25)] hover:shadow-[0_10px_35px_rgba(255,255,255,0.35)] transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <LogIn className="w-5 h-5" />
-              {isLoading ? 'Signing in...' : 'Sign in with Google'}
+              {isLoading ? 'Signing in...' : googleReady ? 'Sign in with Google' : 'Loading Google...'}
             </button>
             <div className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white/80">
               <Crown className="w-4 h-4 text-amber-300" />
-              Live BTC Feed
+              BTC 极速行情
             </div>
           </div>
         </div>
@@ -95,7 +95,17 @@ const HomeCard = ({ onPlay, onLogin, isLoading }) => (
             </div>
           </div>
           <div className="mt-6 text-xs text-white/50">
-            实时行情来自后端 `/api/price`，下注前请确认网络通畅。
+            投注前先登录锁定身份，赢的都是你的。
+          </div>
+        </div>
+      </div>
+
+      {/* 宝箱喷金币 */}
+      <div className="relative mt-10 flex items-center justify-center">
+        <div className="chest-container">
+          <div className="chest-body">
+            <div className="chest-lid" />
+            <div className="chest-coins" />
           </div>
         </div>
       </div>
@@ -106,20 +116,55 @@ const HomeCard = ({ onPlay, onLogin, isLoading }) => (
 const App = () => {
   const [view, setView] = useState('home'); // 'home' | 'game'
   const [isLoading, setIsLoading] = useState(false);
+   const [googleReady, setGoogleReady] = useState(false);
+
+  // Google Identity Services
+  useEffect(() => {
+    const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+    if (existing) {
+      initGoogle();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = initGoogle;
+    document.body.appendChild(script);
+  }, []);
+
+  const initGoogle = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+    if (!clientId || !window.google?.accounts?.id) return;
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      callback: (response) => {
+        if (response?.credential) {
+          setView('game');
+        }
+        setIsLoading(false);
+      },
+    });
+    setGoogleReady(true);
+  };
 
   const handleLogin = () => {
     if (isLoading) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setView('game');
-    }, 1200);
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.prompt();
+    } else {
+      setTimeout(() => {
+        setIsLoading(false);
+        setView('game');
+      }, 1200);
+    }
   };
 
   if (view === 'game') {
     return <BitcoinGame onBack={() => setView('home')} />;
   }
-  return <HomeCard onPlay={() => setView('game')} onLogin={handleLogin} isLoading={isLoading} />;
+  return <HomeCard onPlay={() => setView('game')} onLogin={handleLogin} isLoading={isLoading} googleReady={googleReady} />;
 };
 
 export default App;
