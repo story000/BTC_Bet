@@ -1,0 +1,4 @@
+node_modules/
+bitcoin-game/node_modules/
+*.log
+.vercel

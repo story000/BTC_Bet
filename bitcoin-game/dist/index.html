@@ -4,37 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bitcoin Prediction Game</title>
-    <script type="module" crossorigin src="./assets/index-CDbEBvwM.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BRCbO9yf.css">
+    <script type="module" crossorigin src="./assets/index-Csv3ZPUw.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BTFvrrSl.css">
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      (() => {
-        const params = new URLSearchParams(window.location.search);
-        const savedBase = localStorage.getItem("cryptoBaseUrl");
-        const defaultBase = "https://btc-bet-backend-1012075997843.us-central1.run.app/";
-        const baseUrlRaw = params.get("server") || savedBase || defaultBase;
-        const baseUrl = baseUrlRaw.endsWith("/") ? baseUrlRaw : `${baseUrlRaw}/`;
-        const symbol = (params.get("symbol") || "BTCUSD").toUpperCase();
-        localStorage.setItem("cryptoBaseUrl", baseUrl);
-
-        async function fetchPrice() {
-          try {
-            const res = await fetch(`${baseUrl}api/price?symbol=${encodeURIComponent(symbol)}`);
-            const data = await res.json();
-            const price = parseFloat(data.price);
-            if (!Number.isNaN(price) && typeof window.updatePrice === "function") {
-              window.updatePrice(price);
-            }
-          } catch (err) {
-            console.error("Failed to fetch price", err);
-          }
-        }
-
-        setInterval(fetchPrice, 1000);
-        fetchPrice();
-      })();
-    </script>
   </body>
 </html>

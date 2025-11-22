@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowUp, ArrowDown, Wallet, Plus, Minus, RotateCcw, TrendingUp, TrendingDown, Zap, ShieldAlert, Bitcoin } from 'lucide-react';
+import { ArrowUp, ArrowDown, Wallet, Plus, Minus, RotateCcw, TrendingUp, TrendingDown, Zap, ShieldAlert, Bitcoin, ArrowLeft } from 'lucide-react';
 import jackpotBackground from '../fig/jackpot_background.png';
 
 // --- Custom Icons (Refined Axis-Style Candles) ---
@@ -46,7 +46,7 @@ const FallCandles = ({ className }) => (
   </svg>
 );
 
-const BitcoinGame = () => {
+const BitcoinGame = ({ onBack }) => {
   // --- Game State ---
   const [balance, setBalance] = useState(12345);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -269,6 +269,15 @@ const BitcoinGame = () => {
         backgroundAttachment: 'fixed'
       }}
     >
+      {onBack && (
+        <button
+          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white hover:bg-black/70 transition"
+          onClick={onBack}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Home
+        </button>
+      )}
       
       {/* --- Background Atmosphere --- */}
       <div className={`absolute inset-0 transition-colors duration-700 pointer-events-none
