@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Gamepad2, Coins, Sparkles, LogIn, Crown, Shield } from 'lucide-react';
+import { usePrivy } from '@privy-io/react-auth';
 import BitcoinGame from './BitcoinGame.jsx';
 import jackpotBackground from '../fig/jackpot_background.png';
 
@@ -23,7 +24,7 @@ const CoinBurst = () => {
   );
 };
 
-const HomeCard = ({ onPlay, onLogin, isLoading, googleReady }) => (
+const HomeCard = ({ onPlay, onLogin, isLoading, canLogin }) => (
   <div
     className="min-h-screen flex items-center justify-center text-white px-4 relative overflow-hidden"
     style={{
@@ -56,11 +57,11 @@ const HomeCard = ({ onPlay, onLogin, isLoading, googleReady }) => (
             </button>
             <button
               onClick={onLogin}
-              disabled={isLoading || !googleReady}
+              disabled={isLoading || !canLogin}
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-gray-900 font-semibold shadow-[0_10px_25px_rgba(255,255,255,0.25)] hover:shadow-[0_10px_35px_rgba(255,255,255,0.35)] transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <LogIn className="w-5 h-5" />
-              {isLoading ? 'Signing in...' : googleReady ? 'Sign in with Google' : 'Loading Google...'}
+              {isLoading ? 'Signing in...' : canLogin ? 'Sign in with Privy' : 'Loading Login...'}
             </button>
             <div className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white/80">
               <Crown className="w-4 h-4 text-amber-300" />
@@ -115,56 +116,34 @@ const HomeCard = ({ onPlay, onLogin, isLoading, googleReady }) => (
 
 const App = () => {
   const [view, setView] = useState('home'); // 'home' | 'game'
+  const { authenticated, login, ready } = usePrivy();
   const [isLoading, setIsLoading] = useState(false);
-   const [googleReady, setGoogleReady] = useState(false);
 
-  // Google Identity Services
-  useEffect(() => {
-    const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-    if (existing) {
-      initGoogle();
-      return;
+  const handleLogin = async () => {
+    if (isLoading || !ready) return;
+    setIsLoading(true);
+    try {
+      await login();
+      setView('game');
+    } catch (err) {
+      console.error('Privy login failed', err);
+    } finally {
+      setIsLoading(false);
     }
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = initGoogle;
-    document.body.appendChild(script);
-  }, []);
-
-  const initGoogle = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
-    if (!clientId || !window.google?.accounts?.id) return;
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: (response) => {
-        if (response?.credential) {
-          setView('game');
-        }
-        setIsLoading(false);
-      },
-    });
-    setGoogleReady(true);
   };
 
-  const handleLogin = () => {
-    if (isLoading) return;
-    setIsLoading(true);
-    if (window.google?.accounts?.id) {
-      window.google.accounts.id.prompt();
+  const handlePlay = () => {
+    if (authenticated) {
+      setView('game');
     } else {
-      setTimeout(() => {
-        setIsLoading(false);
-        setView('game');
-      }, 1200);
+      handleLogin();
     }
   };
 
   if (view === 'game') {
     return <BitcoinGame onBack={() => setView('home')} />;
   }
-  return <HomeCard onPlay={() => setView('game')} onLogin={handleLogin} isLoading={isLoading} googleReady={googleReady} />;
+  return <HomeCard onPlay={handlePlay} onLogin={handleLogin} isLoading={isLoading} canLogin={ready} />;
 };
 
 export default App;
